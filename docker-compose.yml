@@ -1,0 +1,20 @@
+version: "3.0"
+services:
+  db:
+    image: postgres:10
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./docker/db/pgdata:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "topfood-backend"
+
+  localstack-s3:
+    image: localstack/localstack:0.11.4
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEFAULT_REGION=us-west-1
+
