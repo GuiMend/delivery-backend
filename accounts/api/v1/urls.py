@@ -8,7 +8,6 @@ from django.urls import re_path, include
 from rest_auth.views import (
     LoginView,
     LogoutView,
-    UserDetailsView,
     PasswordChangeView,
     PasswordResetConfirmView,
     PasswordResetView,
@@ -21,6 +20,8 @@ from rest_framework_nested import routers
 from .views import (
     ChangeEmailViewSet,
     ChangeEmailConfirmationViewSet,
+    UserDetailsView,
+    UserView,
 )
 
 ###
@@ -28,6 +29,7 @@ from .views import (
 ###
 """ Main router """
 router = routers.SimpleRouter()
+router.register(r'users', UserView, basename="users")
 
 ###
 # URLs

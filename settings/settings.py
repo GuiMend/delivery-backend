@@ -37,6 +37,8 @@ ALLOWED_HOSTS = [
     '.us-west-2.elb.amazonaws.com',
     '.compute-1.amazonaws.com',
     'localhost',
+    '127.0.0.1',
+    '.ngrok.io',
 ]
 
 EC2_PRIVATE_IP = None
@@ -85,6 +87,7 @@ INSTALLED_APPS = [
 
     # Applications
     'accounts',
+    'restaurants',
 
     # Third party django mods
     'drf_yasg',
@@ -194,6 +197,10 @@ AUTHENTICATION_BACKENDS = (
 REST_AUTH_SERIALIZERS = {
     'TOKEN_SERIALIZER': 'accounts.api.v1.serializers.UserTokenSerializer',
     'PASSWORD_RESET_SERIALIZER': 'accounts.api.v1.serializers.PasswordResetSerializer',
+}
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'accounts.api.v1.serializers.RegisterSerializer',
 }
 
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'

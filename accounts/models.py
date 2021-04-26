@@ -10,6 +10,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import ugettext as _
 
+from helpers.s3 import UploadFileTo
+
 
 ###
 # Choices
@@ -25,8 +27,29 @@ from django.utils.translation import ugettext as _
 # Models
 ###
 class User(AbstractUser):
-    # Override user model here
-    pass
+    # Helpers
+    UPLOAD_TO = 'accounts'
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    is_restaurant = models.BooleanField(
+        verbose_name=_('Is Restaurant owner'),
+        default=False,
+    )
+    image = models.FileField(
+        upload_to=UploadFileTo(UPLOAD_TO, 'image'),
+        null=True,
+        blank=True,
+        verbose_name=_('Image'),
+    )
+
+    @property
+    def full_name(self):
+        if self.first_name:
+            return f'{self.first_name} {self.last_name}'
+        return 'Unnamed'
 
 
 class ChangeEmailRequest(models.Model):

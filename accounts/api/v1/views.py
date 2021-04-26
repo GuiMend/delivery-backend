@@ -15,15 +15,18 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 from rest_framework import (
     permissions,
+    viewsets,
     status,
     generics,
+    mixins,
 )
 from rest_framework.response import Response
-from rest_auth.registration.views import SocialLoginView
+from rest_auth.views import UserDetailsView as BaseUserDetailsView
 from accounts.models import (
     ChangeEmailRequest,
-)
+    User)
 from . import serializers
+from .permissions import IsRestaurantOwner
 
 
 ###
@@ -34,6 +37,20 @@ from . import serializers
 ###
 # Viewsets
 ###
+class UserView(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = serializers.UserListSerializer
+    permission_classes = (permissions.IsAuthenticated, IsRestaurantOwner)
+    pagination_class = None
+
+
+class UserDetailsView(BaseUserDetailsView):
+    serializer_class = serializers.UserDetailsSerializer
+
+    def get_serializer_class(self):
+        return self.serializer_class
+
+
 class ChangeEmailViewSet(generics.GenericAPIView):
     serializer_class = serializers.ChangeEmailSerializer
     permission_classes = (permissions.IsAuthenticated,)

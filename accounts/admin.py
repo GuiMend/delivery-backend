@@ -22,6 +22,7 @@ from . import models
 class UserAdmin(BaseUserAdmin):
     list_display = ('id', 'email', 'username', 'is_active', 'last_login', 'date_joined',)
 
+
 @admin.register(models.ChangeEmailRequest)
 class ChangeEmailRequestAdmin(admin.ModelAdmin):
     list_display = ('email',)
