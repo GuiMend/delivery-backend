@@ -6,7 +6,8 @@ topfood-backend settings
 ###
 import os
 import requests
-
+import boto3
+import botocore
 import dj_database_url
 import dotenv
 import sentry_sdk
@@ -163,13 +164,24 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 ###
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-AWS_AUTO_CREATE_BUCKET = True
+# AWS_AUTO_CREATE_BUCKET = True
 AWS_IS_GZIPPED = True
 AWS_QUERYSTRING_AUTH = False
 if DEBUG or ENVIRONMENT == 'test':
     AWS_S3_ENDPOINT_URL = 'http://localhost:4566/'
     AWS_SECRET_ACCESS_KEY = 'foo'
     AWS_ACCESS_KEY_ID = 'foo'
+
+# Creates the bucket locally
+if ENVIRONMENT == 'development':
+    s3 = boto3.resource('s3', endpoint_url=AWS_S3_ENDPOINT_URL)
+    try:
+        s3.meta.client.head_bucket(Bucket=AWS_STORAGE_BUCKET_NAME)
+    except botocore.exceptions.ClientError as e:
+        error_code = e.response['Error']['Code']
+        if error_code == '404':
+            bucket = s3.Bucket(AWS_STORAGE_BUCKET_NAME)
+            bucket.create(ACL='public-read')
 
 ###
 # Rest Framework
